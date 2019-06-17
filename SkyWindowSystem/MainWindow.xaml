@@ -274,7 +274,7 @@
                     </Button>
                 </Grid>
             </Border>
-            <Border BorderBrush="#FF393939" BorderThickness="1" Margin="310,0,378,0">
+            <Border BorderBrush="#FF393939" BorderThickness="1" Margin="309,0,379,0">
                 <Grid HorizontalAlignment="Left" Width="257">
                     <Button x:Name="freewheel_cmd" Content="飞轮开" Click="btnOnFreewheelCmd" IsEnabled="false" HorizontalAlignment="Left" Margin="33,72,0,0" VerticalAlignment="Top" Width="98" Height="38"  FontSize="18" Foreground="Black" Background="Lime">
                         <Button.Template>
@@ -411,6 +411,7 @@
                 <ColumnDefinition Width="0.7*"/>
                 <ColumnDefinition Width="0.3*"/>
             </Grid.ColumnDefinitions>
+            <!--3D显示-->
             <Viewport3D Margin="0,0,49,20" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Width="Auto">
                 <!--相机-->
                 <Viewport3D.Camera>
@@ -566,7 +567,7 @@
 
             <!--姿态参数-->
             <Label Content="姿态参数（° ; °/s）" Grid.Column="1" HorizontalAlignment="Left" Margin="8,18,0,0" VerticalAlignment="Top" Foreground="Yellow" FontSize="16"/>
-            <Grid Grid.Column="1" Height="130" Margin="35.2,52,35.244,0" VerticalAlignment="Top">
+            <Grid Grid.Column="1" Height="130" Margin="35,52,35,0" VerticalAlignment="Top">
 
                 <!--定义边框样式-->
                 <Grid.Resources>
@@ -635,9 +636,78 @@
                 <Label Grid.Row="3" Grid.Column="3" Content="0" Foreground="Yellow" Name="velocity_roll"/>
 
             </Grid>
-            <Label Content="当前温度 °C" Grid.Column="1" HorizontalAlignment="Left" Margin="8,0,0,251" Foreground="Yellow" FontSize="16" VerticalAlignment="Bottom" Width="102"/>
-            <Label Content="温控温度 °C" Grid.Column="1" HorizontalAlignment="Left" Margin="8,0,0,286" Foreground="Yellow" FontSize="16" VerticalAlignment="Bottom" Width="102"/>
-            <Label Name="aim_temper"  Content="NA" Grid.Column="1" HorizontalAlignment="Left" Margin="110,187,0,285" Foreground="Yellow" FontSize="16" RenderTransformOrigin="0.529,0.806" />
+            <Label Content="温度参数（℃）" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,194,0,0" Foreground="Yellow" FontSize="16"/>
+            <Grid Grid.Column="1" Height="150" VerticalAlignment="Top" Margin="35,228,35,0" >
+                <!--定义边框样式-->
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="#FFFF8B3D" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Foreground" Value="#FFFFAF7A" />
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Style>
+                </Grid.Resources>
+                
+                <!--定义行列-->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.2*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.35*"/>
+                    <ColumnDefinition Width="0.35*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!--绘制边框-->
+                <Border Grid.Row="0" Grid.Column="0" BorderThickness="2,2,1,1" />
+                <Border Grid.Row="0" Grid.Column="1" BorderThickness="1,2,1,1" />
+                <Border Grid.Row="0" Grid.Column="3" BorderThickness="1,2,2,1" />
+
+                <Border Grid.Row="1" Grid.Column="0" BorderThickness="2,1,1,1" />
+                <Border Grid.Row="1" Grid.Column="1" />
+                <Border Grid.Row="1" Grid.Column="3" BorderThickness="1,1,2,1" />
+
+                <Border Grid.Row="2" Grid.Column="0" BorderThickness="2,1,1,1" />
+                <Border Grid.Row="2" Grid.Column="1" />
+                <Border Grid.Row="2" Grid.Column="3" BorderThickness="1,1,2,1" />
+
+                <Border Grid.Row="3" Grid.Column="0" BorderThickness="2,1,1,1" />
+                <Border Grid.Row="3" Grid.Column="1" />
+                <Border Grid.Row="3" Grid.Column="3" BorderThickness="1,1,2,1" />
+
+                <Border Grid.Row="4" Grid.Column="0" BorderThickness="2,1,1,2" />
+                <Border Grid.Row="4" Grid.Column="1" BorderThickness="1,1,1,2" />
+                <Border Grid.Row="4" Grid.Column="3" BorderThickness="1,1,2,2" />
+
+                <!--添加文字-->
+                <Label Grid.Row="0" Grid.Column="1" Content="设定值"/>
+                <Label Grid.Row="0" Grid.Column="3" Content="测量值"/>
+                
+                <Label Grid.Row="1" Grid.Column="0" Content="主控"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="姿控"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="电源"/>
+                <Label Grid.Row="4" Grid.Column="0" Content="热控"/>
+
+                <!--显示数据-->
+                <TextBox Grid.Row="1" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_main" />
+                <TextBox Grid.Row="2" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_attitude" />
+                <TextBox Grid.Row="3" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_power" />
+                <TextBox Grid.Row="4" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_thermal" />
+
+                <Label Grid.Row="1" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_main" />
+                <Label Grid.Row="2" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_attitude" />
+                <Label Grid.Row="3" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_power" />
+                <Label Grid.Row="4" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_thermal" />
+            </Grid>
             <Label Content="蓄电池电量" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,79" Foreground="Yellow" FontSize="16" VerticalAlignment="Bottom" RenderTransformOrigin="0.466,-3.605"/>
             <simon:BatteryProgress x:Name="pb_elec_quantity" Margin="84,429,65,16" Grid.Column="1"/>
             <Label Name="lb_elec_quantity" Content="{Binding ElementName=pb_elec_quantity, Path=Value, Mode=OneWay}" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,25,17" Foreground="{Binding ElementName=pb_elec_quantity, Path=Foreground, Mode=OneWay}" VerticalAlignment="Bottom"/>
@@ -670,36 +740,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Canvas x:Name="gaugeCanvas" Margin="50,285,82,109" Grid.Column="1" >
-
-                <Path StrokeThickness="13">
-                    <Path.Data>
-                        <PathGeometry Figures="M 13,51 A 100,100 0 0 1 187,51" />
-                    </Path.Data>
-                    <Path.Stroke>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="0.1" Color="Yellow"/>
-                            <GradientStop Offset="0.6" Color="Green"/>
-                            <GradientStop Offset="0.9" Color="Red"/>
-                        </LinearGradientBrush>
-                    </Path.Stroke>
-                </Path>
-                <Path x:Name="indicatorPin" Fill="Orange">
-                    <Path.Data>
-                        <PathGeometry>
-                            <PathGeometry.Figures>
-                                <PathFigure StartPoint="95,90" IsClosed="True">
-                                    <PathFigure.Segments>
-                                        <LineSegment Point="100,25"/>
-                                        <LineSegment Point="105,90"/>
-                                    </PathFigure.Segments>
-                                </PathFigure>
-                            </PathGeometry.Figures>
-                        </PathGeometry>
-                    </Path.Data>
-                </Path>
-            </Canvas>
-            <TextBlock x:Name="currentValueTxtBlock"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Width="39" Foreground="#FF19CEE0" Text="0" TextAlignment="Center"  Grid.Column="1" Margin="110,225,137,247" RenderTransformOrigin="0.545,-0.244" Height="31"  />
+            <Canvas x:Name="gaugeCanvas" Margin="50,285,82,109" Grid.Column="1" />
         </Grid>
     </Grid>
 </Window>
