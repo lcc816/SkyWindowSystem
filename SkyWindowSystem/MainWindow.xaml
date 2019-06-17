@@ -698,10 +698,10 @@
                 <Label Grid.Row="4" Grid.Column="0" Content="热控"/>
 
                 <!--显示数据-->
-                <TextBox Grid.Row="1" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_main" />
-                <TextBox Grid.Row="2" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_attitude" />
-                <TextBox Grid.Row="3" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_power" />
-                <TextBox Grid.Row="4" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="S_temper_thermal" />
+                <TextBox Grid.Row="1" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="s_temper_main" />
+                <TextBox Grid.Row="2" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="s_temper_attitude" />
+                <TextBox Grid.Row="3" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="s_temper_power" />
+                <TextBox Grid.Row="4" Grid.Column="1" Foreground="Lime" Background="Transparent" Name="s_temper_thermal" />
 
                 <Label Grid.Row="1" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_main" />
                 <Label Grid.Row="2" Grid.Column="3" Content="0" Foreground="Lime" Name="m_temper_attitude" />

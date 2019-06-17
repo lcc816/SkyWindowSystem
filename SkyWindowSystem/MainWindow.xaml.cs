@@ -28,7 +28,10 @@ namespace SkyWindowSystem
     {
         //值类数据
         public static byte power_level;//电池电压
-        public static short  temperature_now;//当前温度
+        public static short temper_main;//主控温度
+        public static short temper_attitude;//姿控温度
+        public static short temper_power;//电源温度
+        public static short temper_thermal;//热控温度
         public static int  HMC5883_value;//指南针数据                                    
         public static byte power_control;//电量管理是否开启
         public static byte dip_angle_x;//卫星倾角X
@@ -55,11 +58,8 @@ namespace SkyWindowSystem
 
     public partial class MainWindow : Window
     {
-        private int TemAngleOld = 0; //温度历史值
-        private int TemAngleNow= 0; //当前温度
-
         // 目标星A状态（初始化false）
-        // 定义：如果本派心跳不等于前拍心跳，则目标星A工作正常
+        // 定义：如果本拍心跳不等于前拍心跳，则目标星A工作正常
         public bool bTargetSatAstate = false;
         //---------------------------------------------------
         // 端口数据定义
@@ -82,7 +82,7 @@ namespace SkyWindowSystem
         public MainWindow()
         {
             InitializeComponent();
-            DrawScale();
+            //DrawScale();
 
             MyMessage.zhongkong = true;
             MyMessage.power_level = 10;
@@ -111,47 +111,47 @@ namespace SkyWindowSystem
         /// <summary>
         /// 画表盘的刻度
         /// </summary>
-        private void DrawScale()
-        {
-            for (int i = 30; i <= 150; i += 5)
-            {
-                //添加刻度线
-                Line lineScale = new Line();
+        //private void DrawScale()
+        //{
+        //    for (int i = 30; i <= 150; i += 5)
+        //    {
+        //        //添加刻度线
+        //        Line lineScale = new Line();
 
-                if (i % 20== 0)
-                {
-                    lineScale.X1 = 100 - 82 * Math.Cos(i * Math.PI / 180);
-                    lineScale.Y1 = 100 - 82 * Math.Sin(i * Math.PI / 180);
-                    lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0x00, 0xFF, 0));//使用红色的线
-                    lineScale.StrokeThickness = 3;//线宽为5
-                    //添加刻度值
-                    TextBlock txtScale = new TextBlock();
-                    txtScale.Text = ((i-60)/2).ToString();
-                    txtScale.FontSize = 12;
-                   if (i < 90)//对坐标值进行一定的修正
-                    {
-                        Canvas.SetLeft(txtScale, 100 - 83 * Math.Cos(i * Math.PI / 180));
-                    }
-                    else
-                    {
-                        Canvas.SetLeft(txtScale, 90 - 70 * Math.Cos(i * Math.PI / 180));
+        //        if (i % 20== 0)
+        //        {
+        //            lineScale.X1 = 100 - 82 * Math.Cos(i * Math.PI / 180);
+        //            lineScale.Y1 = 100 - 82 * Math.Sin(i * Math.PI / 180);
+        //            lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0x00, 0xFF, 0));//使用红色的线
+        //            lineScale.StrokeThickness = 3;//线宽为5
+        //            //添加刻度值
+        //            TextBlock txtScale = new TextBlock();
+        //            txtScale.Text = ((i-60)/2).ToString();
+        //            txtScale.FontSize = 12;
+        //           if (i < 90)//对坐标值进行一定的修正
+        //            {
+        //                Canvas.SetLeft(txtScale, 100 - 83 * Math.Cos(i * Math.PI / 180));
+        //            }
+        //            else
+        //            {
+        //                Canvas.SetLeft(txtScale, 90 - 70 * Math.Cos(i * Math.PI / 180));
                       
-                    }
-                    Canvas.SetTop(txtScale, 95 - 75 * Math.Sin(i * Math.PI / 180));
-                    this.gaugeCanvas.Children.Add(txtScale);
-                }
-                else
-                {
-                    lineScale.X1 = 100 - 85 * Math.Cos(i * Math.PI / 180);
-                    lineScale.Y1 = 100 - 85 * Math.Sin(i * Math.PI / 180);
-                    lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0xFF, 0x00, 0));
-                    lineScale.StrokeThickness = 2;
-                }
-                lineScale.X2 = 100 - 93 * Math.Cos(i * Math.PI / 180);
-                lineScale.Y2 = 100 - 93 * Math.Sin(i * Math.PI / 180);
-                this.gaugeCanvas.Children.Add(lineScale);
-            }
-        }
+        //            }
+        //            Canvas.SetTop(txtScale, 95 - 75 * Math.Sin(i * Math.PI / 180));
+        //            this.gaugeCanvas.Children.Add(txtScale);
+        //        }
+        //        else
+        //        {
+        //            lineScale.X1 = 100 - 85 * Math.Cos(i * Math.PI / 180);
+        //            lineScale.Y1 = 100 - 85 * Math.Sin(i * Math.PI / 180);
+        //            lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0xFF, 0x00, 0));
+        //            lineScale.StrokeThickness = 2;
+        //        }
+        //        lineScale.X2 = 100 - 93 * Math.Cos(i * Math.PI / 180);
+        //        lineScale.Y2 = 100 - 93 * Math.Sin(i * Math.PI / 180);
+        //        this.gaugeCanvas.Children.Add(lineScale);
+        //    }
+        //}
 
         // ----------------------------------------
         // 名称：CommInit
@@ -238,12 +238,12 @@ namespace SkyWindowSystem
                 stateThread.Join();
             }
             
+            // 关闭串口
+            if (spPort.IsOpen)
+            {
                 // 关闭串口
-                if (spPort.IsOpen)
-                {
-                    // 关闭串口
-                    spPort.Close();
-                }
+                spPort.Close();
+            }
             }
             // 需要等待辅助线程资源先行释放再关闭主线程
             this.Close();
@@ -286,10 +286,11 @@ namespace SkyWindowSystem
                                     MyMessage.power_control = byReadBuf[4];
                                     break;
                                 case 2:
-                                    MyMessage.temperature_now =(short)((byReadBuf[3]<<8)+ byReadBuf[4]);
-                                    //  if (MyMessage.temperature_now > 0x8000)
-                                    //  MyMessage.temperature_now = 0x8000 - MyMessage.temperature_now;
-                                    MyMessage.temp_control = byReadBuf[5];
+                                    MyMessage.temper_main =(short)((byReadBuf[3]<<8)+ byReadBuf[4]);
+                                    MyMessage.temper_attitude = (short)((byReadBuf[5] << 8) + byReadBuf[6]);
+                                    MyMessage.temper_power = (short)((byReadBuf[7] << 8) + byReadBuf[8]);
+                                    MyMessage.temper_thermal = (short)((byReadBuf[9] << 8) + byReadBuf[10]);
+                                    MyMessage.temp_control = byReadBuf[11];
                                     break;
                                 case 4:
                                     MyMessage.HMC5883_value = (byReadBuf[3] << 8) + byReadBuf[4];
@@ -368,7 +369,11 @@ namespace SkyWindowSystem
             double dbErrVelocityPitch = 0;// 俯仰角速率误差
             double dbErrVelocityRoll = 0; // 滚转角速率误差
             // 目标星温度（单位°C）
-            double dbTemperature = 0.0; // 目标星温度
+            double dbTemperMain = 0.0; // 主控温度
+            double dbTemperAttitude = 0.0; // 姿控温度
+            double dbTemperPower = 0.0; // 热控温度
+            double dbTemperThermal = 0.0; // 热控温度
+
             // 星载电池电量
             int nElecQuantity = 0; // 星载电池电量
             // 指令状态
@@ -400,8 +405,11 @@ namespace SkyWindowSystem
                 else
                     bMagnetbarCmd = false;
 
-                nElecQuantity = MyMessage.power_level*10;//电量值
-                dbTemperature = MyMessage.temperature_now*0.1;//温度值
+                nElecQuantity = MyMessage.power_level * 10;//电量值
+                dbTemperMain = MyMessage.temper_main * 0.1;//主控温度
+                dbTemperAttitude = MyMessage.temper_main * 0.1;//姿控温度
+                dbTemperPower = MyMessage.temper_main * 0.1;//电源温度
+                dbTemperThermal = MyMessage.temper_main * 0.1;//热控温度
 
                 dbAnglePitch = MyMessage.dip_angle_x;//俯仰角
                 dbVelocityPitch = MyMessage.dip_angle_x - MyMessageOld.dip_angle_x;//俯仰角速率
@@ -552,23 +560,14 @@ namespace SkyWindowSystem
                     
                 }));
                 //-----------------
-                // 目标星温度（注意，标签不需要单独设定，已经与进度条绑定）
+                // 目标星温度, 分别显示主控、姿控、电源和热控模块温度
                 //-----------------
                  Dispatcher.Invoke(new Action(() =>
                 {
-                    RotateTransform rt = new RotateTransform();
-                    rt.CenterX = 100;
-                    rt.CenterY = 90;
-
-                    this.indicatorPin.RenderTransform = rt;
-                    TemAngleOld = TemAngleNow;
-                    TemAngleNow = (int)(dbTemperature - 15)*2+5;
-
-                    double timeAnimation = Math.Abs(TemAngleOld - TemAngleNow) * 8;
-                    DoubleAnimation da = new DoubleAnimation(TemAngleOld, TemAngleNow, new Duration(TimeSpan.FromMilliseconds(timeAnimation)));
-                    da.AccelerationRatio = 1;
-                    rt.BeginAnimation(RotateTransform.AngleProperty, da);
-                    this.currentValueTxtBlock.Text =dbTemperature.ToString("f1");
+                    this.m_temper_main.Content = dbTemperMain.ToString("f1");
+                    this.m_temper_attitude.Content = dbTemperAttitude.ToString("f1");
+                    this.m_temper_power.Content = dbTemperPower.ToString("f1");
+                    this.m_temper_thermal.Content = dbTemperThermal.ToString("f1");
                 }));
                 //-----------------
                 // 星载电池电量（注意，标签不需要单独设定，已经与进度条绑定）
@@ -613,13 +612,21 @@ namespace SkyWindowSystem
                     {
                         thermalctrl_cmd.Content = "温控开";
                         thermalctrl_cmd.Background = new SolidColorBrush(color_green);
-                        this.aim_temper.Content = "40°C";
+                        // 设置温度文本框可编辑
+                        this.s_temper_main.IsReadOnly = false;
+                        this.s_temper_attitude.IsReadOnly = false;
+                        this.s_temper_power.IsReadOnly = false;
+                        this.s_temper_thermal.IsReadOnly = false;
                     }
                     else
                     {
                         thermalctrl_cmd.Content = "温控关";
                         thermalctrl_cmd.Background = new SolidColorBrush(color_red);
-                        this.aim_temper.Content = "NA";
+                        // 设置温度文本框不可编辑
+                        this.s_temper_main.IsReadOnly = true;
+                        this.s_temper_attitude.IsReadOnly = true;
+                        this.s_temper_power.IsReadOnly = true;
+                        this.s_temper_thermal.IsReadOnly = true;
                     }
                    
                     // 磁力矩棒
