@@ -59,7 +59,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Satellite.ico</ApplicationIcon>
@@ -130,8 +130,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="SkyWindowSystem_1_TemporaryKey.pfx" />
-    <None Include="SkyWindowSystem_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="bottom.png" />

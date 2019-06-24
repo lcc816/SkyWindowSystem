@@ -81,8 +81,7 @@ namespace SkyWindowSystem
 
         public MainWindow()
         {
-            InitializeComponent();
-            //DrawScale();
+            InitializeComponent();;
 
             MyMessage.zhongkong = true;
             MyMessage.power_level = 10;
@@ -107,51 +106,6 @@ namespace SkyWindowSystem
 
             strBaudRate = "38400";//通讯波特率
         }
-
-        /// <summary>
-        /// 画表盘的刻度
-        /// </summary>
-        //private void DrawScale()
-        //{
-        //    for (int i = 30; i <= 150; i += 5)
-        //    {
-        //        //添加刻度线
-        //        Line lineScale = new Line();
-
-        //        if (i % 20== 0)
-        //        {
-        //            lineScale.X1 = 100 - 82 * Math.Cos(i * Math.PI / 180);
-        //            lineScale.Y1 = 100 - 82 * Math.Sin(i * Math.PI / 180);
-        //            lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0x00, 0xFF, 0));//使用红色的线
-        //            lineScale.StrokeThickness = 3;//线宽为5
-        //            //添加刻度值
-        //            TextBlock txtScale = new TextBlock();
-        //            txtScale.Text = ((i-60)/2).ToString();
-        //            txtScale.FontSize = 12;
-        //           if (i < 90)//对坐标值进行一定的修正
-        //            {
-        //                Canvas.SetLeft(txtScale, 100 - 83 * Math.Cos(i * Math.PI / 180));
-        //            }
-        //            else
-        //            {
-        //                Canvas.SetLeft(txtScale, 90 - 70 * Math.Cos(i * Math.PI / 180));
-                      
-        //            }
-        //            Canvas.SetTop(txtScale, 95 - 75 * Math.Sin(i * Math.PI / 180));
-        //            this.gaugeCanvas.Children.Add(txtScale);
-        //        }
-        //        else
-        //        {
-        //            lineScale.X1 = 100 - 85 * Math.Cos(i * Math.PI / 180);
-        //            lineScale.Y1 = 100 - 85 * Math.Sin(i * Math.PI / 180);
-        //            lineScale.Stroke = new SolidColorBrush(Color.FromRgb(0xFF, 0x00, 0));
-        //            lineScale.StrokeThickness = 2;
-        //        }
-        //        lineScale.X2 = 100 - 93 * Math.Cos(i * Math.PI / 180);
-        //        lineScale.Y2 = 100 - 93 * Math.Sin(i * Math.PI / 180);
-        //        this.gaugeCanvas.Children.Add(lineScale);
-        //    }
-        //}
 
         // ----------------------------------------
         // 名称：CommInit
@@ -274,9 +228,9 @@ namespace SkyWindowSystem
                     // 读取数据
                     spPort.Read(byReadBuf, 0, nBytesNum);
                     // 转码
-                    if (nBytesNum > 6)
+                    if (nBytesNum > 4)
                     {
-                        if (byReadBuf[0] == 0xaa && byReadBuf[1] == 0x55)
+                    if (byReadBuf[0] == 0xaa && byReadBuf[1] == 0x55 && byReadBuf[nBytesNum-2] == 0x0a && byReadBuf[nBytesNum - 1] == 0x0d)
                         {
                             bTargetSatAstate = true;
                             switch (byReadBuf[2])
@@ -316,7 +270,7 @@ namespace SkyWindowSystem
             }
             catch (Exception e)
             {
-                // MessageBox.Show(e.ToString(), "线程终止调试信息");
+                //MessageBox.Show(e.ToString(), "线程终止调试信息");
             }
 
             // 线程结束
